@@ -194,7 +194,7 @@ h1, h2, h3 {
     justify-content: center;
     text-align: center;
     color: white;
-    overflow: hidden; /* Чтобы blur не выходил за границы */
+    overflow: hidden; 
 }
 
 .hero-bg {
@@ -369,7 +369,7 @@ th {
 
 .social {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 15px;
 }
 
@@ -398,7 +398,7 @@ th {
             border: 0;
         }
 
-        /* Адаптивные медиазапросы */
+        /*Медиазапросы */
         @media (max-width: 480px) {
             .map {
                 padding-bottom: 75%;
