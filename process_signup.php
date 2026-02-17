@@ -59,7 +59,7 @@ try {
     $stmt->bind_param("ssss", $name, $phone, $location, $group);
     
     if ($stmt->execute()) {
-        sendJson(true, 'Registration successful');
+        sendJson(true, 'Вы записаны на тренировку!');
     } else {
         throw new Exception("Execute failed: ".$stmt->error);
     }

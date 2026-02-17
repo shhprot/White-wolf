@@ -72,7 +72,7 @@ const groupsData = {
     lesnaya: [
         "ВТ, ЧТ, СБ: 18:00 - 20:00 (Общая)"
     ],
-    denisova: [
+    aksakova: [
         "ПН, СР, ПТ: 9:30 - 11:00 (Общая группа для учащихся второй смены)",
         "ПН, СР, ПТ: 14:15 - 15:45 (5-8 лет)",
         "ПН, СР, ПТ: 15:45 - 17:30 (10-12 лет)",
@@ -101,16 +101,43 @@ document.getElementById('locationSelect').addEventListener('change', function() 
 });
 
 // Отправка формы
+// Функция для показа кастомного диалога
+function showDialog(message, isSuccess = true) {
+    // Удаляем предыдущие диалоги
+    const oldDialog = document.querySelector('.custom-dialog');
+    const oldOverlay = document.querySelector('.overlay');
+    if (oldDialog) oldDialog.remove();
+    if (oldOverlay) oldOverlay.remove();
+    
+    // Создаём overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    
+    // Создаём диалог
+    const dialog = document.createElement('div');
+    dialog.className = 'custom-dialog';
+    
+    const icon = isSuccess ? '✅' : '❌';
+    const color = isSuccess ? '#28a745' : '#dc3545';
+    
+    dialog.innerHTML = `
+        <div style="font-size: 48px; margin-bottom: 10px;">${icon}</div>
+        <div style="color: ${color}; margin-bottom: 15px;">${message}</div>
+        <button onclick="this.closest('.custom-dialog').remove(); document.querySelector('.overlay').remove();">OK</button>
+    `;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(dialog);
+}
+
 document.getElementById('trainingForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = e.target;
     const submitBtn = form.querySelector('button[type="submit"]');
-    const messageDiv = document.getElementById('formMessage');
     
     submitBtn.disabled = true;
-    messageDiv.style.display = 'block';
-    messageDiv.textContent = 'Отправка данных...';
-    messageDiv.style.color = 'blue';
+    
+    showDialog('⏳ Отправка данных...', true);
 
     try {
         const response = await fetch('process_signup.php', {
@@ -121,15 +148,13 @@ document.getElementById('trainingForm').addEventListener('submit', async functio
         const data = await response.json();
         
         if (data.success) {
-            messageDiv.innerHTML = '✅ ' + data.message;
-            messageDiv.style.color = 'green';
+            showDialog(data.message, true);
             form.reset();
         } else {
-            throw new Error(data.error || 'Ошибка сервера');
+            showDialog('Ошибка: ' + (data.error || 'Неизвестная ошибка'), false);
         }
     } catch (error) {
-        messageDiv.innerHTML = '❌ Ошибка: ' + error.message;
-        messageDiv.style.color = 'red';
+        showDialog('Ошибка соединения: ' + error.message, false);
     } finally {
         submitBtn.disabled = false;
     }
